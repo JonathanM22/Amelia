@@ -18,11 +18,11 @@ LiquidCrystal lcd(13, 12, 8, 9, 10, 11); //(rs, en, d4, d5, d6, d7)
 #define DEFAULT_PULSE_WIDTH  1500
 Servo right_aileron , left_aileron , right_rudder, left_rudder, elevator, land_right, land_left;
 //Specific Servo limits in MicroSeconds | Here for refrence mostly
-int RA[] = {2050, 1460, 850};                              //Right Aileron    |Down, Level, Up|
-int LA[] = {825, 1400, 1950};                              //Left Aileron     |Down, Level, Up|
-int RR[] = {1000, 1550, 2100};                             //Right Rudder     |Out,  Level, In|
-int LR[] = {2100, 1600, 1000};                             //Left Rudder      |Out,  Level, In|
-int EV[] = {2000, 1430, 850};                              //Evevator         |Down, Level, Up|
+int RA[] = {2050, 1460, 850};                             //Right Aileron    |Down, Level, Up|
+int LA[] = {825, 1400, 1950};                             //Left Aileron     |Down, Level, Up|
+int RR[] = {1000, 1550, 2100};                            //Right Rudder     |Out,  Level, In|
+int LR[] = {2100, 1600, 1000};                            //Left Rudder      |Out,  Level, In|
+int EV[] = {2000, 1430, 850};                             //Evevator         |Down, Level, Up|
 
 
 //Ultrasonic sensor
@@ -53,9 +53,9 @@ int displaycount = 0;
 float elapsedTime, time, timePrev;                        //Variables for time control
 
 // PID Constants
-float desired_pitch = -5;                                //Desired Pitch  |Can be changed|
-float desired_roll = 0;                                  //Desired Roll   |Can be changed|
-float desired_yaw = 0;                                   //Desired Yaw    |Can be changed|
+float desired_pitch = -5;                                 //Desired Pitch  |Can be changed|
+float desired_roll = 0;                                   //Desired Roll   |Can be changed|
+float desired_yaw = 0;                                    //Desired Yaw    |Can be changed|
 
 
 /*
@@ -83,7 +83,7 @@ float PID_p_yaw, PID_i_yaw, PID_d_yaw, PID_total_yaw;
 
 //Variables For PID value caculation
 float pitch_diference, pitch_previous_error, pitch_error, roll_diference, roll_previous_error, roll_error, yaw_diference, yaw_previous_error, yaw_error; 
-int period = 60;                                         //Refresh rate period of the loop is 60ms
+int period = 60;                                          //Refresh rate period of the loop is 60ms
 
 //Place holder values   |These are used when you don't know thw upper and lower bound of a servo|
 int servo_upper_bound, servo_lower_bound;
@@ -92,16 +92,16 @@ int servo_upper_bound, servo_lower_bound;
 void setup() {
 
   // LEDs
-  pinMode(39, OUTPUT);                                   //Front Lights
-  pinMode(41, OUTPUT);                                   //Middle Lights
-  pinMode(43, OUTPUT);                                   //Back Lights
+  pinMode(39, OUTPUT);                                    //Front Lights
+  pinMode(41, OUTPUT);                                    //Middle Lights
+  pinMode(43, OUTPUT);                                    //Back Lights
 
-  digitalWrite(39, HIGH);                                //Turn Front Lights ON
-  delay(1200);                                           //Wait 1.2 Seconds
-  digitalWrite(41, HIGH);                                //Turn Middle Lights ON
-  delay(1200);                                           //Wait 1.2 Seconds
-  digitalWrite(43, HIGH);                                //Turn Back Lights ON
-  delay(1200);                                           //Wait 1.2 Seconds
+  digitalWrite(39, HIGH);                                 //Turn Front Lights ON
+  delay(1200);                                            //Wait 1.2 Seconds
+  digitalWrite(41, HIGH);                                 //Turn Middle Lights ON
+  delay(1200);                                            //Wait 1.2 Seconds
+  digitalWrite(43, HIGH);                                 //Turn Back Lights ON
+  delay(1200);                                            //Wait 1.2 Seconds
 
   //Declare Servo Pins |Can be changed|
   right_aileron .attach(26);
@@ -112,7 +112,7 @@ void setup() {
   land_left.attach(30);
   land_right.attach(31);
 
-  land_left.writeMicroseconds(500);                      //Sets Landing Gear Up
+  land_left.writeMicroseconds(500);                       //Sets Landing Gear Up
   land_right.writeMicroseconds(500);                         
 
 
@@ -120,16 +120,16 @@ void setup() {
   Wire.begin();
 
   //LCD commands 
-  lcd.begin(16, 2);                                      //Starts LCD
-  lcd.clear();                                           //Clears LCD Display
-  lcd.setCursor(0, 0);                                   //Printing on first row
-  lcd.print("Calibrating");                              //Prints on Display
-  lcd.setCursor(0, 1);                                   //Printing on second row
+  lcd.begin(16, 2);                                       //Starts LCD
+  lcd.clear();                                            //Clears LCD Display
+  lcd.setCursor(0, 0);                                    //Printing on first row
+  lcd.print("Calibrating");                               //Prints on Display
+  lcd.setCursor(0, 1);                                    //Printing on second row
 
-  setup_mpu_6050_registers                              //Setup the registers of the MPU-6050s
+  setup_mpu_6050_registers                                //Setup the registers of the MPU-6050s
 
-  for (int cal_int = 0; cal_int < 2000 ; cal_int ++) {                  //Run this code 2000 times To get average Offset
-    if (cal_int % 125 == 0)lcd.print(".");                              //Prints a dot on the LCD every 125 values
+  for (int cal_int = 0; cal_int < 2000 ; cal_int ++) {    //Run this code 2000 times To get average Offset
+    if (cal_int % 125 == 0)lcd.print(".");                //Prints a dot on the LCD every 125 values
     read_mpu_6050_data();
     gyro_x_cal += gyro_x;
     gyro_y_cal += gyro_y;
@@ -141,7 +141,7 @@ void setup() {
 
     delay(3);                                                           
   }
-  gyro_x_cal /= 2000;                                                   //Divide the gyro values by 2000 to get the avarage
+  gyro_x_cal /= 2000;                                     //Divide the gyro values by 2000 to get the avarage
   gyro_y_cal /= 2000;
   gyro_z_cal /= 2000;
 
@@ -238,89 +238,98 @@ void loop() {
 
 
   //Pitch Correction - - - - - - - - - - - - - - - - - - - - - -
-  PID_p_pitch = kp_pitch * pitch_error;                          //Proportional Value
+  PID_p_pitch = kp_pitch * pitch_error;                                 //Proportional Value
 
-  pitch_diference = (pitch_error - pitch_previous_error);        //Derivative Path
-  if (-1.2 < (pitch_diference) && (pitch_diference) < 1.2) {     //Check for high frequancy noise
-    PID_d_pitch += 0;}                                           //Blocking noise
+  pitch_diference = (pitch_error - pitch_previous_error);               //Derivative Path
+  if (-1.2 < (pitch_diference) && (pitch_diference) < 1.2) {            //Blocking noise |Using the d/dx of roll to check for high frequancy noise|
+    PID_d_pitch += 0;                                                   //Blocking noise
+    }
   else {
-    PID_d_pitch = kd_pitch * (pitch_diference / period);}        //Derivative Value                    
+    PID_d_pitch = kd_pitch * (pitch_diference / period);                //Derivative Value    
+    }                
 
-  if (700 <= PID_i_pitch) && (PID_i_pitch >= 1900)) {            //Integral Path 
-    PID_i_pitch += 0;}                                           //Clamps intergal if saturating 
+  if (700 <= PID_i_pitch) && (PID_i_pitch >= 1900)) {                   //Integral Path |Checks for saturation|
+    PID_i_pitch += 0;                                                   //Clamps intergal path if system is saturating
+    }
   else {
-    PID_i_pitch = PID_i_pitch + ki_pitch * (pitch_error);}       //Integral Value
+    PID_i_pitch = PID_i_pitch + ki_pitch * (pitch_error);               //Calucatles Integral Value
+    }
 
-  PID_total_pitch = PID_p_pitch + PID_i_pitch + PID_d_pitch;     //Total PID value for Pitch
-  pitch_previous_error = pitch_error;                            //Sets error to previous error
+  PID_total_pitch = PID_p_pitch + PID_i_pitch + PID_d_pitch;            //Total PID value for Pitch
+  pitch_previous_error = pitch_error;                                   //Sets error to previous error
 
-  float PID_elevator = map(PID_total_pitch,-60,60,2000,750);     //Maps PID_pitch value to Servo Limits
-  elevator.writeMicroseconds(PID_elevator);                      //Tells Servo To move
-
-  //Roll Correction - - - - - - - - - - - - - - - - - - - - - -
-  PID_p_roll = kp_roll * roll_error;                                                   //Proportional Path
-
-  roll_diference = (roll_error - roll_previous_error);                                 //Derivative Path
-
-  if (-1.2 < (roll_diference) && (roll_diference) < 1.2) {                             //Blocking noise |Using the d/dx of roll to check for high frequancy noise|
-    PID_d_pitch += 0;
-    PID_d_roll += 0;
+    if (PID_total_roll < -60) {                                         //Restricts PID_pitch Value for easier mapping
+    PID_total_pitch = -60;
   }
-  else {
-    PID_d_roll = kd_roll * (roll_diference / period);
+  if (PID_total_roll > 60) {
+    PID_total_pitch = 60;
   }
 
-  if (750 <= PID_i_roll && PID_i_roll >= 2200) {                                       //Intergal Vlaue |Checks for saturation|
-    PID_i_pitch += 0;                                                                  //Clamps intergal path if system is saturating
+  float PID_elevator = map(PID_total_pitch,-60,60,2000,750);            //Maps PID_pitch value to Servo Limits
+  elevator.writeMicroseconds(PID_elevator);                             //Tells Servo To move
+
+  //Roll Correction - - - - - - - - - - - - - - - - - - - - - - 
+  PID_p_roll = kp_roll * roll_error;                                    //Proportional Path
+
+  roll_diference = (roll_error - roll_previous_error);                  //Derivative Path
+  if (-1.2 < (roll_diference) && (roll_diference) < 1.2) {              //Blocking noise |Using the d/dx of roll to check for high frequancy noise|
+    PID_d_roll += 0;                                                    //Blocking noise
   }
   else {
-    PID_i_roll = PID_i_roll + ki_roll * (roll_error);                                  //Calucatles Integral Value
+    PID_d_roll = kd_roll * (roll_diference / period);                   //Derivative Value  
   }
 
-  PID_total_roll = PID_p_roll + PID_i_roll + PID_d_roll;                               //Total PID value for Roll
+  if (750 <= PID_i_roll && PID_i_roll >= 2200) {                        //Intergal Path |Checks for saturation|
+    PID_i_roll += 0;                                                    //Clamps intergal path if system is saturating
+  }
+  else {
+    PID_i_roll = PID_i_roll + ki_roll * (roll_error);                   //Calucatles Integral Value
+  }
 
-  roll_previous_error = roll_error;                                                    //Sets error to previous error
+  PID_total_roll = PID_p_roll + PID_i_roll + PID_d_roll;                //Total PID value for Roll
+  roll_previous_error = roll_error;                                     //Sets error to previous error
 
-  if (PID_total_roll < -65) {
+  if (PID_total_roll < -65) {                                           //Restricts PID_roll Value for easier mapping
+    PID_total_pitch = -60;
     PID_total_pitch = -65;
   }
   if (PID_total_roll > 65) {
     PID_total_pitch = 65;
   }
 
-  float PID_left_aileron = map(PID_total_roll, -65, 65,  2200, 725)                    //Maps PID_roll value to Servos Limits
+  float PID_left_aileron = map(PID_total_roll, -65, 65,  2200, 725)     //Maps PID_roll value to Servos Limits
   float PID_right_aileron = map(PID_total_roll, -65, 65,  2250, 750);                  
 
 
   //Yaw Correction - - - - - - - - - - - - - - - - - - - - - -
-  PID_p_yaw = kp_yaw * yaw_error;                                                      //Proportional Value
+  PID_p_yaw = kp_yaw * yaw_error;                                       //Proportional Value
 
-  yaw_diference = (yaw_error - yaw_previous_error);                                    //Derivitive Value
-  
-  if (-1.2 < (yaw_diference) && (yaw_diference) < 1.2) {                               //Blocking noise |Using the d/dx of yaw to check for high frequancy noise|
-    PID_d_yaw += 0;
+  yaw_diference = (yaw_error - yaw_previous_error);                     //Derivitive Value
+  if (-1.2 < (yaw_diference) && (yaw_diference) < 1.2) {                //Blocking noise |Using the d/dx of yaw to check for high frequancy noise|
+    PID_d_yaw += 0;                                                     //Blocking noise
   }
   else {
-    PID_d_yaw = kd_yaw * (yaw_diference / period);
+    PID_d_yaw = kd_yaw * (yaw_diference / period);                     //Derivative Value 
   }
 
-  if (750 <= PID_i_yaw && PID_i_yaw >= 2400) {                                         //Intergal Vlaue |Checks for saturation|
-    PID_i_yaw += 0;                                                                    //Clamps intergal path if system is saturating
+  if (750 <= PID_i_yaw && PID_i_yaw >= 2400) {                         //Intergal Vlaue |Checks for saturation|
+    PID_i_yaw += 0;                                                    //Clamps intergal path if system is saturating
   }
   else {
-    PID_i_yaw = PID_i_yaw + ki_yaw * (yaw_error);                                      //Calucatles Integral Value
+    PID_i_yaw = PID_i_yaw + ki_yaw * (yaw_error);                      //Calucatles Integral Value
   }
 
-  PID_total_yaw = PID_p_yaw + PID_i_yaw + PID_d_yaw;                                   //Total PID value for Roll
+  PID_total_yaw = PID_p_yaw + PID_i_yaw + PID_d_yaw;                   //Total PID value for Yaw
+  yaw_previous_error = yaw_error;                                      //Sets error to previous error
 
-  if (PID_total_roll < -40) {
+  if (PID_total_roll < -40) {                                          //Restricts PID_yaw Value for easier mapping
     PID_total_pitch = -40;
   }
   if (PID_total_roll > 40) {
     PID_total_pitch = 40;
   }
 
-  float PID_left_rudder = map(PID_total_yaw, -40, 40,  2500, 825);                     //Maps PID_roll value to Servos Limits
+  float PID_left_rudder = map(PID_total_yaw, -40, 40,  2500, 825);     //Maps PID_roll value to Servos Limits
   float PID_right_rudder = map(PID_total_yaw, -40, 40,  2500, 700);     
 
 
