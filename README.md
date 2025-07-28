@@ -1,2 +1,2 @@
 # Amelia
-A project I did for fun.
+A project where I tried to make a RC foam plane self level with a PID controller. 
